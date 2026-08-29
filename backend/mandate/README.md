@@ -1,0 +1,1 @@
+# Mandate schema + Supabase access layer (FR-MAN-*)

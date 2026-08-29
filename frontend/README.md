@@ -1,0 +1,1 @@
+# Next.js + Tailwind dashboard (FR-DSH-*)

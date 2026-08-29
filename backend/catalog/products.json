@@ -1,0 +1,17 @@
+{
+  "merchant_id": "amart-grocers-001",
+  "merchant_name": "Amart Grocers",
+  "mcc": "5411",
+  "products": [
+    { "sku": "RICE-BASMATI-1KG", "name": "Basmati Rice 1kg", "price_inr": 180, "category": "Staples" },
+    { "sku": "DAL-TOOR-1KG", "name": "Toor Dal 1kg", "price_inr": 145, "category": "Staples" },
+    { "sku": "OIL-SUNFLOWER-1L", "name": "Sunflower Oil 1L", "price_inr": 160, "category": "Staples" },
+    { "sku": "MILK-TONED-1L", "name": "Toned Milk 1L", "price_inr": 58, "category": "Dairy" },
+    { "sku": "CURD-SET-500G", "name": "Set Curd 500g", "price_inr": 45, "category": "Dairy" },
+    { "sku": "EGGS-FREE-12", "name": "Free-Range Eggs (12)", "price_inr": 96, "category": "Dairy" },
+    { "sku": "BREAD-WHOLE-WHEAT", "name": "Whole Wheat Bread", "price_inr": 42, "category": "Bakery" },
+    { "sku": "APPLE-SHIMLA-1KG", "name": "Shimla Apples 1kg", "price_inr": 210, "category": "Produce" },
+    { "sku": "BANANA-ROBUSTA-1KG", "name": "Robusta Bananas 1kg", "price_inr": 55, "category": "Produce" },
+    { "sku": "SOAP-NEEM-100G", "name": "Neem Soap 100g", "price_inr": 35, "category": "Personal Care" }
+  ]
+}

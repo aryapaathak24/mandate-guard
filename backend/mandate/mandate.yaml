@@ -1,0 +1,19 @@
+mandate_id: MAND-2026-0001
+user_id: user-alice-001
+created_at: "2026-08-27T10:00:00Z"
+limits:
+  max_per_transaction: 1000
+  max_cumulative: 5000
+  cumulative_window_hours: 24
+  max_attempts_per_minute: 5
+scope:
+  allowed_mcc:
+    - "5411"
+    - "5499"
+  allowed_merchants:
+    - amart-grocers-001
+  blocked_categories:
+    - "Gift Cards"
+    - "Alcohol"
+status: active
+revoked_at: null

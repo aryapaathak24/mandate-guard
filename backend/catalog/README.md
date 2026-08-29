@@ -1,0 +1,1 @@
+# Product catalog data + llms.txt (FR-CAT-1, FR-CAT-2, FR-CAT-3)

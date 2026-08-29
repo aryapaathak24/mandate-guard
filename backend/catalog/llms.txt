@@ -1,0 +1,26 @@
+# Catalog — Amart Grocers
+
+This `llms.txt` describes the product catalog consumed by the Agentic Guard
+agent. It is placed at the catalog root to demonstrate agent-readable
+discovery (FR-CAT-2).
+
+## Purpose
+
+The catalog is the read-only, machine-readable source of truth for the
+products the shopping agent may add to a cart. It is defined by the schema in
+SRS section 6.2.
+
+## Location
+
+- `products.json` — the structured catalog (merchant + products).
+  Each product has: `sku`, `name`, `price_inr`, and `category`.
+
+## Agent usage instructions
+
+1. Read `products.json` to enumerate available products and their `sku`.
+2. A cart item MUST reference an existing `sku` exactly; unknown SKUs are
+   rejected downstream by the Interceptor (UNKNOWN_SKU).
+3. Each product belongs to exactly one `category` (FR-CAT-3). The agent MUST
+   NOT infer or invent a category for a product.
+4. Prices are in INR and are read-only at runtime; the agent MUST NOT change
+   the `price_inr` of a product when building a cart.
