@@ -51,7 +51,7 @@ Full technical detail: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 | **Risk Manager / Interceptor** | ✅ | `FR-INT-1` to `FR-INT-11` |
 | **Mock payment client** (simulated NPCI failure codes) | ✅ | `FR-PAY-1`, `FR-PAY-2` |
 | **Agent Orchestrator** | ✅ | `FR-AGT-1` to `FR-AGT-6` |
-| **Live dashboard** (mandate seal, audit ledger, revoke) | ⏳ in progress | `FR-DSH-1` to `FR-DSH-7` |
+| **Live dashboard** (mandate seal, audit ledger, revoke) | ✅ | `FR-DSH-1` to `FR-DSH-7` |
 | **Real Razorpay MCP integration** | ⏳ pending test keys | `FR-PAY-3`, `FR-PAY-4` |
 
 Every requirement above has a corresponding pytest test (see [`backend/tests/`](backend/tests/), named `test_<FR-ID>_<description>`), traceable to [docs/SRS.md](docs/SRS.md).
