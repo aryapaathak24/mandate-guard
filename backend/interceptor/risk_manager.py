@@ -222,3 +222,19 @@ class RiskManager:
         mandate = self._load_mandate()
         mandate = revoke_mandate(mandate)
         self._save_mandate(mandate)
+
+    # --- statistics & telemetry ------------------------------------------
+
+    def get_stats(self) -> dict[str, int]:
+        """Return runtime statistics for monitoring and dashboard display.
+
+        Encapsulates internal counters (_approved_events, _attempt_timestamps,
+        _cumulative_spend) so consumers do not couple to private state.
+        """
+        approved = len(self._approved_events)
+        blocked = len(self._attempt_timestamps) - approved
+        return {
+            "approved_count": approved,
+            "blocked_count": blocked,
+            "total_spend_inr": self._cumulative_spend,
+        }
