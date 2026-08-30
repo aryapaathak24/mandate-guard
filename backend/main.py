@@ -12,6 +12,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from agent.orchestrator import build_cart, attempt_purchase
@@ -19,6 +20,19 @@ from interceptor.risk_manager import RiskManager, AUDIT_LOG_PATH
 from mandate.mandate import load_mandate
 
 app = FastAPI(title="Agentic Guard")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3001",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Single shared instance — module-level, created once at startup.
 risk_manager = RiskManager()
