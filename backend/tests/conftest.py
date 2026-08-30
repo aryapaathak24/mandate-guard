@@ -14,6 +14,7 @@ PRODUCTS = [
     {"sku": "RICE-BASMATI-1KG", "name": "Basmati Rice 1kg", "price_inr": 180, "category": "Staples"},
     {"sku": "MILK-TONED-1L", "name": "Toned Milk 1L", "price_inr": 58, "category": "Dairy"},
     {"sku": "GIFT-CARD-500", "name": "Gift Card 500", "price_inr": 500, "category": "Gift Cards"},
+    {"sku": "GC-AMAZON-500", "name": "Amazon Gift Card ₹500", "price_inr": 500, "category": "Gift Cards"},
 ]
 
 

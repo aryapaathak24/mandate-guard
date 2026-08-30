@@ -33,6 +33,8 @@ def _fresh_risk_manager(state, monkeypatch):
     def append(entry):
         state["audit"].append(entry)
 
+    monkeypatch.setattr(main, "_read_audit_log", lambda: list(reversed(state["audit"])))
+
     return RiskManager(
         mandate_loader=loader,
         mandate_writer=writer,
@@ -81,6 +83,7 @@ def test_shared_instance_preserves_cumulative_spend(monkeypatch):
 
 
 def test_revoke_via_api(monkeypatch):
+    """Test immediate mandate revocation via API (FR-DSH-5 / FR-INT-10)."""
     state = {}
     shared_rm = _fresh_risk_manager(state, monkeypatch)
     monkeypatch.setattr(main, "risk_manager", shared_rm)
@@ -91,3 +94,30 @@ def test_revoke_via_api(monkeypatch):
     assert resp.status_code == 200
     assert resp.json()["ok"] is True
     assert state["mandate"]["status"] == "revoked"
+
+
+def test_category_blocked_via_api(monkeypatch):
+    state = {}
+    shared_rm = _fresh_risk_manager(state, monkeypatch)
+    monkeypatch.setattr(main, "risk_manager", shared_rm)
+
+    client = TestClient(main.app)
+
+    # Attempt purchasing a product in denied category 'Gift Cards' (FR-INT-5 / FR-DSH-3)
+    resp = client.post(
+        "/api/purchase",
+        json={"sku_qty_pairs": [["GC-AMAZON-500", 1]], "merchant_id": "amart-grocers-001"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["ok"] is False
+    assert "Gift Cards" in data["message"]
+    assert "GC-AMAZON-500" in data["message"]
+
+    # Verify state updates blocked_count and logs the audit entry (FR-DSH-2, FR-DSH-3)
+    state_resp = client.get("/api/state").json()
+    assert state_resp["stats"]["blocked_count"] == 1
+    assert state_resp["stats"]["approved_count"] == 0
+    assert state_resp["stats"]["total_spend_inr"] == 0
+    assert len(state_resp["audit_log"]) == 1
+    assert state_resp["audit_log"][0]["decision"]["code"] == "SCOPE_CATEGORY"

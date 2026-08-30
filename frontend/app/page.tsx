@@ -42,6 +42,7 @@ export default function Dashboard() {
     }
   }, []);
 
+  // Periodic polling for real-time state refresh (FR-DSH-4)
   useEffect(() => {
     loadState();
     const id = setInterval(loadState, POLL_MS);
@@ -90,6 +91,7 @@ export default function Dashboard() {
             <h1 className="text-2xl font-semibold">Agentic Guard</h1>
             <p className="text-sm text-white/50">Mandate-Bounded Risk Interceptor</p>
           </div>
+          {/* Revoke button (FR-DSH-5) & disabled state upon revocation (FR-DSH-6) */}
           <button
             onClick={revoke}
             disabled={!isActive || revoking}

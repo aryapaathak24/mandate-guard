@@ -12,6 +12,7 @@
     { "sku": "BREAD-WHOLE-WHEAT", "name": "Whole Wheat Bread", "price_inr": 42, "category": "Bakery" },
     { "sku": "APPLE-SHIMLA-1KG", "name": "Shimla Apples 1kg", "price_inr": 210, "category": "Produce" },
     { "sku": "BANANA-ROBUSTA-1KG", "name": "Robusta Bananas 1kg", "price_inr": 55, "category": "Produce" },
-    { "sku": "SOAP-NEEM-100G", "name": "Neem Soap 100g", "price_inr": 35, "category": "Personal Care" }
+    { "sku": "SOAP-NEEM-100G", "name": "Neem Soap 100g", "price_inr": 35, "category": "Personal Care" },
+    { "sku": "GC-AMAZON-500", "name": "Amazon Gift Card ₹500", "price_inr": 500, "category": "Gift Cards" }
   ]
 }
