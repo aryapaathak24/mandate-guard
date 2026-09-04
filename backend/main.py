@@ -16,6 +16,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from agent.orchestrator import build_cart, attempt_purchase
+from catalog.catalog import load_catalog
 from interceptor.risk_manager import RiskManager, AUDIT_LOG_PATH
 from mandate.mandate import load_mandate
 
@@ -61,6 +62,12 @@ def _read_audit_log(limit: int = MAX_AUDIT_ENTRIES) -> list[dict]:
 @app.get("/health")
 def health() -> dict:
     return {"status": "ok"}
+
+
+@app.get("/api/catalog")
+def get_catalog() -> dict:
+    """Return the read-only product catalog for agent/UI selection (FR-CAT-1)."""
+    return load_catalog()
 
 
 @app.get("/api/state")

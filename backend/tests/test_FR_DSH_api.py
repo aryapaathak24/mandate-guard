@@ -121,3 +121,19 @@ def test_category_blocked_via_api(monkeypatch):
     assert state_resp["stats"]["total_spend_inr"] == 0
     assert len(state_resp["audit_log"]) == 1
     assert state_resp["audit_log"][0]["decision"]["code"] == "SCOPE_CATEGORY"
+
+
+def test_get_catalog_via_api():
+    """Test read-only catalog endpoint returns structured products (FR-CAT-1)."""
+    client = TestClient(main.app)
+    resp = client.get("/api/catalog")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "merchant_id" in data
+    assert "products" in data
+    assert len(data["products"]) > 0
+    first = data["products"][0]
+    assert "sku" in first
+    assert "name" in first
+    assert "price_inr" in first
+    assert "category" in first
