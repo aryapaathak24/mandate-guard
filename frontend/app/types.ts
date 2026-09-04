@@ -45,6 +45,20 @@ export interface AuditEntry {
   };
 }
 
+export interface Product {
+  sku: string;
+  name: string;
+  price_inr: number;
+  category: string;
+}
+
+export interface Catalog {
+  merchant_id: string;
+  merchant_name: string;
+  mcc: string;
+  products: Product[];
+}
+
 export interface ApiState {
   mandate: Mandate;
   stats: Stats;
