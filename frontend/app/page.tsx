@@ -32,6 +32,7 @@ export default function Dashboard() {
   const [quantity, setQuantity] = useState<number>(1);
   const [error, setError] = useState<string | null>(null);
   const [revoking, setRevoking] = useState<boolean>(false);
+  const [resetting, setResetting] = useState<boolean>(false);
   const [purchasing, setPurchasing] = useState<boolean>(false);
   const [lastResult, setLastResult] = useState<{
     ok: boolean;
@@ -78,6 +79,19 @@ export default function Dashboard() {
       await loadState();
     } finally {
       setRevoking(false);
+    }
+  };
+
+  const resetState = async () => {
+    setResetting(true);
+    try {
+      await fetch(`${API_URL}/api/reset`, { method: "POST" });
+      setLastResult(null);
+      await loadState();
+    } catch (e) {
+      console.error("Failed to reset:", e);
+    } finally {
+      setResetting(false);
     }
   };
 
@@ -176,6 +190,14 @@ export default function Dashboard() {
       expectedColor: "text-amber border-amber/40 bg-amber/10",
       action: () => executePurchase([["APPLE-SHIMLA-1KG", 6]]),
     },
+    {
+      title: "4. Unrecognized SKU injection",
+      badge: "Tamper Defense",
+      desc: "Unknown SKU (HACK-PAYLOAD-99) × 1",
+      expected: "Expected: Blocked [UNKNOWN_SKU]",
+      expectedColor: "text-purple-400 border-purple-400/40 bg-purple-400/10",
+      action: () => executePurchase([["HACK-PAYLOAD-99", 1]]),
+    },
   ];
 
   return (
@@ -189,18 +211,28 @@ export default function Dashboard() {
               Mandate-Bounded Risk Interceptor
             </p>
           </div>
-          {/* Revoke button (FR-DSH-5) & disabled state upon revocation (FR-DSH-6) */}
-          <button
-            onClick={revoke}
-            disabled={!isActive || revoking}
-            className={`border px-4 py-2 font-medium transition rounded ${
-              isActive
-                ? "border-amber text-amber hover:bg-amber/10"
-                : "border-white/20 text-white/40 cursor-not-allowed"
-            }`}
-          >
-            {isActive ? "Revoke Access" : "Access Revoked"}
-          </button>
+          {/* Action buttons: Reset state & Revoke Access */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={resetState}
+              disabled={resetting}
+              className="border border-white/20 px-3 py-2 text-xs font-mono text-white/70 hover:text-white hover:border-white/40 transition rounded"
+              title="Reset mandate status to Active and clear session stats"
+            >
+              {resetting ? "Resetting…" : "↺ Reset State"}
+            </button>
+            <button
+              onClick={revoke}
+              disabled={!isActive || revoking}
+              className={`border px-4 py-2 font-medium transition rounded ${
+                isActive
+                  ? "border-amber text-amber hover:bg-amber/10"
+                  : "border-white/20 text-white/40 cursor-not-allowed"
+              }`}
+            >
+              {isActive ? "Revoke Access" : "Access Revoked"}
+            </button>
+          </div>
         </header>
 
         {/* Mandate panel — FR-DSH-1 */}

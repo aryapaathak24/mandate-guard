@@ -137,3 +137,41 @@ def test_get_catalog_via_api():
     assert "name" in first
     assert "price_inr" in first
     assert "category" in first
+
+
+def test_unknown_sku_via_api(monkeypatch):
+    """Test that purchase request with unrecognized SKU is cleanly intercepted (FR-INT-11)."""
+    state = {}
+    shared_rm = _fresh_risk_manager(state, monkeypatch)
+    monkeypatch.setattr(main, "risk_manager", shared_rm)
+
+    client = TestClient(main.app)
+    resp = client.post(
+        "/api/purchase",
+        json={"sku_qty_pairs": [["UNKNOWN-SKU-999", 1]], "merchant_id": "amart-grocers-001"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["ok"] is False
+    assert data["code"] == "UNKNOWN_SKU"
+    assert "UNKNOWN-SKU-999" in data["message"]
+
+
+def test_reset_via_api(monkeypatch):
+    """Test reset endpoint restores mandate to active and resets stats."""
+    state = {}
+    shared_rm = _fresh_risk_manager(state, monkeypatch)
+    monkeypatch.setattr(main, "risk_manager", shared_rm)
+
+    client = TestClient(main.app)
+
+    # First revoke
+    client.post("/api/revoke")
+    assert state["mandate"]["status"] == "revoked"
+
+    # Then reset
+    resp = client.post("/api/reset")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["ok"] is True
+    assert state["mandate"]["status"] == "active"

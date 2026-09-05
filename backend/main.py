@@ -24,12 +24,8 @@ app = FastAPI(title="Agentic Guard")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "http://localhost:3001",
-        "http://127.0.0.1:3001",
-    ],
+    allow_origins=["*"],
+    allow_origin_regex=r"https?://(localhost|127\.0\.0\.1)(:\d+)?",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -55,7 +51,15 @@ def _read_audit_log(limit: int = MAX_AUDIT_ENTRIES) -> list[dict]:
         return []
 
     lines = AUDIT_LOG_PATH.read_text(encoding="utf-8").splitlines()
-    entries = [json.loads(line) for line in lines if line.strip()]
+    entries = []
+    for line in lines:
+        line_str = line.strip()
+        if not line_str:
+            continue
+        try:
+            entries.append(json.loads(line_str))
+        except Exception:
+            continue
     return list(reversed(entries[-limit:]))
 
 
@@ -102,4 +106,15 @@ def revoke() -> dict:
         "ok": True,
         "message": "Mandate has been revoked.",
         "mandate_id": load_mandate().get("mandate_id"),
+    }
+
+
+@app.post("/api/reset")
+def reset_state() -> dict:
+    """Reset session statistics and restore mandate to active (for demo repeatability)."""
+    risk_manager.reset()
+    return {
+        "ok": True,
+        "message": "Mandate reset to active and session statistics cleared.",
+        "mandate": load_mandate(),
     }
