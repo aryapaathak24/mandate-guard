@@ -142,9 +142,18 @@ class RiskManager:
                 f"merchant '{merchant_id}' is not in the mandate allow-list",
             )
 
+        catalog = self._load_catalog()
+        allowed_mcc = mandate.get("scope", {}).get("allowed_mcc", [])
+        catalog_mcc = catalog.get("mcc")
+        if allowed_mcc and catalog_mcc and str(catalog_mcc) not in [str(m) for m in allowed_mcc]:
+            return Decision(
+                False,
+                CODE_SCOPE_MERCHANT,
+                f"merchant MCC '{catalog_mcc}' is not in the mandate allowed MCC list",
+            )
+
         # FR-INT-11: unknown SKU (check before other item-level checks).
         items = args.get("items", [])
-        catalog = self._load_catalog()
         known_skus = {p["sku"] for p in catalog.get("products", [])}
         for item in items:
             if item.get("sku") not in known_skus:
@@ -221,6 +230,16 @@ class RiskManager:
         """Set the mandate to 'revoked' and persist it to the mandate file."""
         mandate = self._load_mandate()
         mandate = revoke_mandate(mandate)
+        self._save_mandate(mandate)
+
+    def reset(self) -> None:
+        """Reset internal counters and restore mandate status to active."""
+        self._approved_events.clear()
+        self._cumulative_spend = 0
+        self._attempt_timestamps.clear()
+        mandate = self._load_mandate()
+        mandate["status"] = "active"
+        mandate["revoked_at"] = None
         self._save_mandate(mandate)
 
     # --- statistics & telemetry ------------------------------------------

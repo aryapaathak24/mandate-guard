@@ -38,9 +38,12 @@ def build_cart(sku_qty_pairs: list[tuple[str, int]], merchant_id: str) -> dict:
     items = []
     amount = 0
     for sku, qty in sku_qty_pairs:
-        product = products[sku]
-        items.append({"sku": sku, "qty": qty, "name": product["name"]})
-        amount += product["price_inr"] * qty
+        product = products.get(sku)
+        if product:
+            items.append({"sku": sku, "qty": qty, "name": product["name"]})
+            amount += product.get("price_inr", 0) * qty
+        else:
+            items.append({"sku": sku, "qty": qty, "name": f"Unknown Item ({sku})"})
 
     return {
         "tool": "create_payment_intent",
@@ -69,6 +72,7 @@ def attempt_purchase(risk_manager, tool_call: dict, force_failure: str | None = 
     Returns a user-facing dict (never raw internal error text) with:
       - ``ok``: whether the user should treat the purchase as succeeded
       - ``message``: plain-language explanation of what happened.
+      - ``code``: reason code if rejected or failed.
 
     The payment client is only reached on an approved tool call (FR-AGT-3),
     and a failed execution is never retried automatically (FR-AGT-6).
@@ -80,6 +84,7 @@ def attempt_purchase(risk_manager, tool_call: dict, force_failure: str | None = 
             "ok": False,
             "message": "This purchase was not allowed. "
             f"{decision.reason}.",
+            "code": decision.code,
         }
 
     result: PaymentResult = execute_payment(tool_call, force_failure=force_failure)
