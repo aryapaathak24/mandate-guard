@@ -69,18 +69,40 @@ Every requirement above has a corresponding pytest test (see [`backend/tests/`](
 
 ## Running it locally
 
+### Option A: One-Click Quickstart (Recommended)
+
 ```bash
-# 1. Install dependencies
+# From workspace root:
+./start.sh
+```
+*This automatically sets up Python virtualenv, installs backend & frontend dependencies, runs the 33-test suite, and starts both services.*
+
+### Option B: Manual Setup
+
+```bash
+# 1. Backend Setup
 cd backend
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 
-# 2. Run test suite
+# 2. Run Test Suite (33 tests covering all FR-IDs)
 pytest -v
 
-# 3. Start the backend server
-uvicorn main:app --reload
+# 3. Start Backend API
+uvicorn main:app --reload --port 8000
 ```
-*Health check available at `http://localhost:8000/health`.*
+
+```bash
+# 4. In a separate terminal, start Next.js Dashboard
+cd frontend
+npm install
+npm run dev
+```
+
+- **Dashboard UI:** `http://localhost:3000`
+- **Backend API:** `http://127.0.0.1:8000`
+- **Health check:** `http://127.0.0.1:8000/health`
 
 ---
 
