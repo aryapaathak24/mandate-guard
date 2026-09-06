@@ -3,3 +3,5 @@ uvicorn
 pyyaml
 pytest
 httpx>=0.28.0
+razorpay
+python-dotenv
